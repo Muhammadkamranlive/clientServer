@@ -1,12 +1,24 @@
-﻿namespace CourseMicroSerivce.Domain.TeacherPortal
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CourseMicroSerivce.Domain.TeacherPortal
 {
     public class SchoolCourses
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string? Description { get; set; }
-        public string Status { get; set; }
-        public string CourseType { get; set; }
+        public SchoolCourses()
+        {
+            CouresePost = new HashSet<CoursePosts>();    
+        }
+        public int Id              { get; set; }
+        [Required(ErrorMessage = "Name / Title  is Required")]
+        public string Name         { get; set; }
+      
+        public string? image { get; set; }
+        [Required(ErrorMessage = "status  is Required")]
+        public string status       { get; set; }
+        [Required(ErrorMessage = "Content type  is Required")]
+        public string CourseType   { get; set; }
+        [Required(ErrorMessage = "Chapter   is Required")]
+        public int  ChapterId      { get; set; }
         public ICollection<CoursePosts>? CouresePost { get; set; }
     }
 }

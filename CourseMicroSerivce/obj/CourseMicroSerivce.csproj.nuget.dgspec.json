@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Freelance\\Server\\CourseMicroSerivce\\CourseMicroSerivce.csproj": {}
+    "D:\\Freelance\\Project\\Server\\Server\\CourseMicroSerivce\\CourseMicroSerivce.csproj": {}
   },
   "projects": {
-    "D:\\Freelance\\Server\\CourseMicroSerivce\\CourseMicroSerivce.csproj": {
+    "D:\\Freelance\\Project\\Server\\Server\\CourseMicroSerivce\\CourseMicroSerivce.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Freelance\\Server\\CourseMicroSerivce\\CourseMicroSerivce.csproj",
+        "projectUniqueName": "D:\\Freelance\\Project\\Server\\Server\\CourseMicroSerivce\\CourseMicroSerivce.csproj",
         "projectName": "CourseMicroSerivce",
-        "projectPath": "D:\\Freelance\\Server\\CourseMicroSerivce\\CourseMicroSerivce.csproj",
+        "projectPath": "D:\\Freelance\\Project\\Server\\Server\\CourseMicroSerivce\\CourseMicroSerivce.csproj",
         "packagesPath": "C:\\Users\\TK\\.nuget\\packages\\",
-        "outputPath": "D:\\Freelance\\Server\\CourseMicroSerivce\\obj\\",
+        "outputPath": "D:\\Freelance\\Project\\Server\\Server\\CourseMicroSerivce\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\TK\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -57,9 +57,17 @@
               "target": "Package",
               "version": "[7.0.8, )"
             },
+            "Microsoft.AspNetCore.Hosting": {
+              "target": "Package",
+              "version": "[2.2.7, )"
+            },
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
               "version": "[6.0.19, )"
+            },
+            "Microsoft.AspNetCore.StaticFiles": {
+              "target": "Package",
+              "version": "[2.2.0, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",

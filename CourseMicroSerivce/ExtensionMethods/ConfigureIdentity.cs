@@ -21,7 +21,7 @@ namespace CourseMicroSerivce.ExtensionMethods
             // here i am having only one email unique true  you May have multipule of that 
             var builder = services.AddIdentityCore<ApplicationUser>(user => user.User.RequireUniqueEmail = true);
             builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), services);
-            builder.AddEntityFrameworkStores<Coursecontext>().AddDefaultTokenProviders();
+            builder.AddEntityFrameworkStores<SchoolContext>().AddDefaultTokenProviders();
         }
 
         // extension method to configure jwt
@@ -47,5 +47,7 @@ namespace CourseMicroSerivce.ExtensionMethods
             });
 
         }
+    
+    
     }
 }

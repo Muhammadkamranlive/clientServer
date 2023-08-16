@@ -2,6 +2,7 @@
 {
     public class Teacher:ApplicationUser
     {
-        public DateTime LoginEndDate { get; set; }
+        public DateTime ExpirationDate { get; set; }
+        
     }
 }

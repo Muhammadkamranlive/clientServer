@@ -6,28 +6,32 @@ namespace CourseMicroSerivce.AuthRoleConfigurations
 {
     public class UserRoleConfiguration : IEntityTypeConfiguration<IdentityRole>
     {
-        //the IEntity type confuguration has the  method configure you need to implement your roles in this 
+        private readonly string[] _roles = new string[]
+        {
+        "Administrator",
+        "Teacher",
+        "Student",
+        "Parent",
+        "developer"
+            // Add more roles here if needed
+        };
+
         public void Configure(EntityTypeBuilder<IdentityRole> builder)
         {
-            builder.HasData(
-                new IdentityRole
+            foreach (var roleName in _roles)
+            {
+                
+                var role = new IdentityRole
                 {
-                    Name = "Administrator",
-                    NormalizedName = "ADMINISTRATOR"
-                },
-                new IdentityRole
-                {
-                    Name = "Teacher",
-                    NormalizedName = "TEACHER"
-                }
-                ,
-                new IdentityRole
-                {
-                    Name = "Student",
-                    NormalizedName = "STUDENT"
-                }
-               );
-
+                   
+                    Name = roleName,
+                    NormalizedName = roleName.ToUpper()
+                };
+                builder.HasData(role);
+            }
         }
     }
+
+
+
 }

@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using CourseMicroSerivce.Domain;
 using CourseMicroSerivce.Domain.AuthenticationModels;
+using CourseMicroSerivce.Domain.TeacherPortal;
 using CourseMicroSerivce.Models.AutoMapperDTOS;
+using CourseMicroSerivce.Models.TeacherPortal;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CourseMicroSerivce.Helper
 {
@@ -13,14 +13,20 @@ namespace CourseMicroSerivce.Helper
     {
         public ConfigureDTOS()
         {
-            CreateMap<Person, PersonDTOS>().ReverseMap();
-            CreateMap<Courses, CoursesDTO>().ReverseMap();
-            CreateMap<Category, CategoryDTO>().ReverseMap();
-            CreateMap<Students, StudentDTOS>().ReverseMap();
-            CreateMap<Teachers, TeacherDTOS>().ReverseMap();
-            CreateMap<Tags, TagsDTO>().ReverseMap();
+            CreateMap<ClassesSessions, ClassSessionModel>().ReverseMap();
+            CreateMap<CoursePosts, CoursePostsModel>().ReverseMap();
+            CreateMap<QuizPosts, QuizPostsModel>().ReverseMap();
+            CreateMap<SchoolChapters, SchoolChaptersModel>().ReverseMap();
+            CreateMap<SchoolClasses, SchoolClassesModel>().ReverseMap();
+            CreateMap<SchoolCourses, SchoolCoursesModel>().ReverseMap();
             CreateMap<ApplicationUser, ApplicationUserDTO>().ReverseMap();
-            CreateMap<CourseContent, CourseCotentDTOS>();
+            CreateMap<SchoolQuiz, SchoolQuizModel>().ReverseMap();
+            CreateMap<SchoolSubjects, SchoolSubjectsModel>().ReverseMap();
+            CreateMap<SchoolThemes, SchoolThemesModel>().ReverseMap();
+            CreateMap<Student, StudentDto>().ReverseMap();
+            CreateMap<Admin, AdminDto>().ReverseMap();
+            CreateMap<Teacher, TeacherDto>().ReverseMap();
+            CreateMap<PermissionManagment, PermissionModel>().ReverseMap();
         }
     }
 }

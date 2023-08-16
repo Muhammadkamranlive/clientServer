@@ -1,46 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CourseMicroSerivce.Models;
-using Project.BusinessAccessLayer.Repositories.Unit;
-using Project.BusinessAccessLayer.Repositories.ModelRepositories;
+﻿using Project.BusinessAccessLayer.Repositories.Unit;
+
 using Project.DataAccess;
-using Project.DataAccess.InterfacesImplementations;
+
+using CourseMicroSerivce.Core.BusinessAccessLayer.Repositories.ModelRepositories;
+using CourseMicroSerivce.Core.DataAccessLayer.ModelRepositories;
 
 namespace CourseMicroSerivce.Core.DataAccessLayer.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
 
-        private readonly Coursecontext _courseContext;
+        private readonly SchoolContext _courseContext;
 
-        public UnitOfWork(Coursecontext courseContent)
+        public UnitOfWork(SchoolContext courseContent)
         {
             _courseContext = courseContent;
-            CourseContentRepository = new CourseContentRepository(_courseContext);
-            CourseRepository = new CourseRepository(_courseContext);
-            CategoryRepository = new CategoryRepository(_courseContext);
-            TagRespository = new TagsRepository(_courseContext);
-            TeacherRepository = new TeacherRepository(_courseContext);
-            UserRepository = new PersonRepository(_courseContext);
-            StudentRepository = new StudentRespository(_courseContext);
+           
+
+            ClassesSessionRepo = new ClassesSessions_Repo(_courseContext);
+            CoursePostsRepo    = new CoursePosts_Repo(_courseContext);
+            QuizPostsRepo      = new QuizPosts_Repo(_courseContext);
+            SchoolChaptersRepo = new SchoolChapters_Repo(_courseContext);
+            SchoolClassesRepo  = new SchoolClasses_Repo(_courseContext);
+            SchoolCoursesRepo  = new SchoolCourses_Repo(_courseContext);
+            SchoolQuizRepo     = new SchoolQuiz_Repo(_courseContext);
+            SchoolSubjectsRepo = new SchoolSubjects_Repo(_courseContext);
+            SchoolThemesRepo   = new SchoolThemes_Repo(_courseContext);
+            Permission_Repo    = new Permission_Repo(_courseContext);
         }
-        public ICourseContentRepository CourseContentRepository { get; private set; }
+       
 
-        public ICourseRepository CourseRepository { get; private set; }
+        public IClassesSessions_Repo ClassesSessionRepo { get; private set; }
+        public ICoursePosts_Repo CoursePostsRepo { get; private set; }
 
+        public IQuizPosts_Repo QuizPostsRepo { get; private set; }
 
+        public ISchoolChapters_Repo SchoolChaptersRepo { get; private set; }
 
-        public ICategoryRepository CategoryRepository { get; private set; }
+        public ISchoolClasses_Repo SchoolClassesRepo { get; private set; }
 
-        public ITagRespository TagRespository { get; private set; }
+        public ISchoolCourses_Repo SchoolCoursesRepo { get; private set; }
 
-        public ITeacherRepository TeacherRepository { get; private set; }
+        public ISchoolQuiz_Repo SchoolQuizRepo { get; private set; }
 
-        public IPersonRepository UserRepository { get; private set; }
+        public ISchoolSubjects_Repo SchoolSubjectsRepo { get; private set; }
 
-        public IStudentRepository StudentRepository { get; private set; }
+        public ISchoolThemes_Repo SchoolThemesRepo { get; private set; }
+
+        public IPermission_Repo Permission_Repo { get; private set; }
 
         public async void Dispose()
         {
