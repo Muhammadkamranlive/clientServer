@@ -29,6 +29,7 @@ using CourseMicroSerivce.Core.DataAccessLayer.UnitOfWork;
 using Microsoft.Extensions.FileProviders;
 using CourseMicroSerivce.Domain.AuthenticationModels;
 using Microsoft.AspNetCore.Identity;
+using CourseMicroSerivce.Core.ServicessAccessLayer.Implementations.AuthContractsImplementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,7 +46,7 @@ builder.Services.AddIdentityCore<ApplicationUser>()
 builder.Services.AddScoped<ISchoolThemes_Service, SchoolThemes_Service>();
 builder.Services.AddScoped<ISchoolThemes_Repo, SchoolThemes_Repo>();
 builder.Services.AddScoped<IClassesSessions_Repo, ClassesSessions_Repo>();
-
+builder.Services.AddScoped<IVideoPost_Repo, VideoPost_Repo>();
 builder.Services.AddScoped<ICoursePosts_Repo, CoursePosts_Repo>();
 builder.Services.AddScoped<IQuizPosts_Repo, QuizPosts_Repo>();
 builder.Services.AddScoped<ISchoolChapters_Repo, SchoolChapters_Repo>();
@@ -63,8 +64,7 @@ builder.Services.AddScoped<ISchoolClasses_Service, SchoolClasses_Service>();
 builder.Services.AddScoped<ISchoolQuiz_Service, SchoolQuiz_Service>();
 builder.Services.AddScoped<ISchoolSubjects_Service, SchoolSubjects_Service>();
 builder.Services.AddScoped<IPermission_Service, Permission_Service>();
-
-
+builder.Services.AddScoped<IVideo_Service, Video_Service>();
 //builder.Services.AddScoped<GlobalErrorHandlingMiddleware>();
 builder.Services.ConfigureIdentity();
 

@@ -13,6 +13,7 @@ namespace Project.BusinessAccessLayer.Repositories.Unit
 
         //Teacher Portal
         public IPermission_Repo Permission_Repo { get;  }
+        public IVideoPost_Repo Video_Repo { get; }
         public IClassesSessions_Repo ClassesSessionRepo      { get; }
         public ICoursePosts_Repo CoursePostsRepo             { get; }
         public IQuizPosts_Repo QuizPostsRepo                 { get; }

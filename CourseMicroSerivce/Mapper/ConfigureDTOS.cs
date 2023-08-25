@@ -27,6 +27,7 @@ namespace CourseMicroSerivce.Helper
             CreateMap<Admin, AdminDto>().ReverseMap();
             CreateMap<Teacher, TeacherDto>().ReverseMap();
             CreateMap<PermissionManagment, PermissionModel>().ReverseMap();
+            CreateMap<VideoContent, VideoModel>().ReverseMap();
         }
     }
 }

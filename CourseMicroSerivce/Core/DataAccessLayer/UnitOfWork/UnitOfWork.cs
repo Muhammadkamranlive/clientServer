@@ -27,6 +27,7 @@ namespace CourseMicroSerivce.Core.DataAccessLayer.UnitOfWork
             SchoolSubjectsRepo = new SchoolSubjects_Repo(_courseContext);
             SchoolThemesRepo   = new SchoolThemes_Repo(_courseContext);
             Permission_Repo    = new Permission_Repo(_courseContext);
+            Video_Repo         = new VideoPost_Repo(_courseContext);
         }
        
 
@@ -48,6 +49,8 @@ namespace CourseMicroSerivce.Core.DataAccessLayer.UnitOfWork
         public ISchoolThemes_Repo SchoolThemesRepo { get; private set; }
 
         public IPermission_Repo Permission_Repo { get; private set; }
+
+        public IVideoPost_Repo Video_Repo { get; private set; }
 
         public async void Dispose()
         {

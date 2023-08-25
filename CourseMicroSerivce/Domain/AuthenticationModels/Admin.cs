@@ -2,6 +2,6 @@
 {
     public class Admin:ApplicationUser
     {
-        public string image { get; set; }
+      
     }
 }

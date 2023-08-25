@@ -10,11 +10,14 @@ using Project.ServicessAccessLayer.Contracts.AuthContracts;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Project.ServicessAccessLayer.Implementations.AuthContractsImplementations
 {
@@ -61,7 +64,7 @@ namespace Project.ServicessAccessLayer.Implementations.AuthContractsImplementati
             {
                 var student = (Student)user;
 
-                if (student.ExpirationDate < DateTime.UtcNow)
+                if (student.endDate < DateTime.UtcNow)
                 {
                     return new AuthResponseDto { Message = "Login expired for student." };
                 }
@@ -82,8 +85,22 @@ namespace Project.ServicessAccessLayer.Implementations.AuthContractsImplementati
 
         public async Task<IEnumerable<IdentityError>> RegisterTeacher(TeacherDto teacherDto)
         {
-            var teacher = _mapper.Map<Teacher>(teacherDto);
-            teacher.UserName = teacherDto.Email;
+            var teacher             = new Teacher();
+            teacher.UserName        = teacherDto.UserName;
+            teacher.Email           = teacherDto.Email;
+            teacher.PasswordHash    = teacherDto.Password;
+            teacher.FirstName       = teacherDto.FirstName;
+            teacher.LastName        = teacherDto.LastName;
+            teacher.Image           = teacherDto.Image;
+            teacher.AddressLine1    = teacherDto.AddressLine1;
+            teacher.ZipCode         = teacherDto.ZipCode;
+            teacher.City            = teacherDto.City;
+            teacher.Country         = teacherDto.Country;
+            teacher.ExpirationDate  = teacherDto.ExpirationDate;
+            teacher.startingDate    = teacherDto.StartingDate;
+            teacher.language        = teacherDto.Language;
+            teacher.ClassId         = teacherDto.ClassId; 
+            teacher.SessionId       = teacherDto.SessionId;
 
             var result = await _userManager.CreateAsync(teacher, teacherDto.Password);
             if (result.Succeeded)
@@ -104,10 +121,25 @@ namespace Project.ServicessAccessLayer.Implementations.AuthContractsImplementati
 
         public async Task<IEnumerable<IdentityError>> RegisterStudent(StudentDto studentDto)
         {
-            var student = _mapper.Map<Student>(studentDto);
-            student.UserName = studentDto.Email;
+            var teacher = new Student();
 
-            var result = await _userManager.CreateAsync(student, studentDto.Password);
+            teacher.UserName         = studentDto.UserName;
+            teacher.Email            = studentDto.Email;
+            teacher.PasswordHash     = studentDto.Password;
+            teacher.FirstName        = studentDto.FirstName;
+            teacher.LastName         = studentDto.LastName;
+            teacher.Image            = studentDto.Image;
+            teacher.AddressLine1     = studentDto.AddressLine1;
+            teacher.ZipCode          = studentDto.ZipCode;
+            teacher.City             = studentDto.City;
+            teacher.Country          = studentDto.Country;
+            teacher.endDate          = DateTime.UtcNow.AddMonths(1);
+            teacher.startDate        = DateTime.UtcNow;
+            teacher.speakingLanguage = studentDto.Language;
+            teacher.ClassId          = studentDto.ClassId;
+            teacher.SessionId        = studentDto.SessionId;
+
+            var result = await _userManager.CreateAsync(teacher, studentDto.Password);
             if (result.Succeeded)
             {
                 // Check if the "Student" role exists, and create it if not
@@ -118,7 +150,7 @@ namespace Project.ServicessAccessLayer.Implementations.AuthContractsImplementati
                 }
 
                 // Add the user to the "Student" role
-                await _userManager.AddToRoleAsync(student, "Student");
+                await _userManager.AddToRoleAsync(teacher, "Student");
             }
 
             return result.Errors;
@@ -129,7 +161,7 @@ namespace Project.ServicessAccessLayer.Implementations.AuthContractsImplementati
             var admin = _mapper.Map<Admin>(adminDto);
             admin.UserName = adminDto.Email;
 
-            var result = await _userManager.CreateAsync(admin, adminDto.Password);
+            var result = await _userManager.CreateAsync(admin, adminDto.PasswordHash);
             if (result.Succeeded)
             {
                 // Check if the "Administrator" role exists, and create it if not

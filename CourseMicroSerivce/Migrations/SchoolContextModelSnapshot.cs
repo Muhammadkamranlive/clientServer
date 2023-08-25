@@ -30,8 +30,23 @@ namespace CourseMicroSerivce.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("AddressLine1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ClassId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Discriminator")
@@ -46,6 +61,10 @@ namespace CourseMicroSerivce.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -79,12 +98,19 @@ namespace CourseMicroSerivce.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("SessionId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -108,6 +134,10 @@ namespace CourseMicroSerivce.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SessionEnd")
                         .IsRequired()
@@ -194,9 +224,6 @@ namespace CourseMicroSerivce.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("SchoolQuizId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -213,8 +240,6 @@ namespace CourseMicroSerivce.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SchoolQuizId");
 
                     b.ToTable("QuizPosts");
                 });
@@ -327,26 +352,21 @@ namespace CourseMicroSerivce.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ChapterId")
+                    b.Property<int>("CorrectAnswers")
                         .HasColumnType("int");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("SchoolChaptersId")
                         .HasColumnType("int");
 
-                    b.Property<string>("image")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("TotalQuestions")
+                        .HasColumnType("int");
 
-                    b.Property<string>("status")
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("WrongAnswers")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -423,6 +443,39 @@ namespace CourseMicroSerivce.Migrations
                     b.HasIndex("SchoolSubjectsId");
 
                     b.ToTable("SchoolThemes");
+                });
+
+            modelBuilder.Entity("CourseMicroSerivce.Domain.TeacherPortal.VideoContent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("SchoolCourseId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SchoolCoursesId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("video")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SchoolCoursesId");
+
+                    b.ToTable("VideoContents");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -558,11 +611,39 @@ namespace CourseMicroSerivce.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CourseMicroSerivce.Domain.AuthenticationModels.Student", b =>
+                {
+                    b.HasBaseType("CourseMicroSerivce.Domain.AuthenticationModels.ApplicationUser");
+
+                    b.Property<DateTime>("endDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("paymentToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("speakingLanguage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("startDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasDiscriminator().HasValue("Student");
+                });
+
             modelBuilder.Entity("CourseMicroSerivce.Domain.AuthenticationModels.Teacher", b =>
                 {
                     b.HasBaseType("CourseMicroSerivce.Domain.AuthenticationModels.ApplicationUser");
 
                     b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("language")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("startingDate")
                         .HasColumnType("datetime2");
 
                     b.HasDiscriminator().HasValue("Teacher");
@@ -575,13 +656,6 @@ namespace CourseMicroSerivce.Migrations
                         .HasForeignKey("SchoolCoursesId");
 
                     b.Navigation("SchoolCourses");
-                });
-
-            modelBuilder.Entity("CourseMicroSerivce.Domain.TeacherPortal.QuizPosts", b =>
-                {
-                    b.HasOne("CourseMicroSerivce.Domain.TeacherPortal.SchoolQuiz", null)
-                        .WithMany("QuizPosts")
-                        .HasForeignKey("SchoolQuizId");
                 });
 
             modelBuilder.Entity("CourseMicroSerivce.Domain.TeacherPortal.SchoolChapters", b =>
@@ -634,6 +708,15 @@ namespace CourseMicroSerivce.Migrations
                     b.HasOne("CourseMicroSerivce.Domain.TeacherPortal.SchoolSubjects", null)
                         .WithMany("SubjectThemes")
                         .HasForeignKey("SchoolSubjectsId");
+                });
+
+            modelBuilder.Entity("CourseMicroSerivce.Domain.TeacherPortal.VideoContent", b =>
+                {
+                    b.HasOne("CourseMicroSerivce.Domain.TeacherPortal.SchoolCourses", "SchoolCourses")
+                        .WithMany()
+                        .HasForeignKey("SchoolCoursesId");
+
+                    b.Navigation("SchoolCourses");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -707,11 +790,6 @@ namespace CourseMicroSerivce.Migrations
             modelBuilder.Entity("CourseMicroSerivce.Domain.TeacherPortal.SchoolCourses", b =>
                 {
                     b.Navigation("CouresePost");
-                });
-
-            modelBuilder.Entity("CourseMicroSerivce.Domain.TeacherPortal.SchoolQuiz", b =>
-                {
-                    b.Navigation("QuizPosts");
                 });
 
             modelBuilder.Entity("CourseMicroSerivce.Domain.TeacherPortal.SchoolSubjects", b =>

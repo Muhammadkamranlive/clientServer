@@ -112,7 +112,7 @@ namespace CourseMicroSerivce.API.AuthAPI
 
 
         [HttpGet]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = ("Administrator"))]
+       // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = ("Administrator"))]
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await authManager.GetList();

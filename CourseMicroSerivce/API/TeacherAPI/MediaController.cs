@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace CourseMicroSerivce.API.TeacherAPI
 {
@@ -16,7 +17,7 @@ namespace CourseMicroSerivce.API.TeacherAPI
             {
                 return BadRequest("No file selected or invalid file.");
             }
-
+           
             // Generate a unique file name for the uploaded image
             string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
             string filePath = Path.Combine(UploadsFolder, fileName);

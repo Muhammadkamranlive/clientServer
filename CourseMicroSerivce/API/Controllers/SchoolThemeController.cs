@@ -13,15 +13,15 @@ namespace CourseMicroSerivce.API.Controllers
     [ApiController]
     public class SchoolThemeController : ParentController<SchoolThemes, SchoolThemesModel>
     {
-        private readonly ISchoolThemes_Service      _schoolThemesService;
-        private readonly IMapper                    _mapper;
-        private readonly ISchoolSubjects_Service    _subjectService;
-        private readonly ISchoolClasses_Service     _classService;
-        private readonly IClassesSessions_Service   _sessionService;
+        private readonly ISchoolThemes_Service _schoolThemesService;
+        private readonly IMapper _mapper;
+        private readonly ISchoolSubjects_Service _subjectService;
+        private readonly ISchoolClasses_Service _classService;
+        private readonly IClassesSessions_Service _sessionService;
         private readonly IPermission_Service _permissionService;
         public SchoolThemeController
         (
-         ISchoolThemes_Service Service, 
+         ISchoolThemes_Service Service,
          IMapper mapper,
          ISchoolSubjects_Service schoolSubjects,
          ISchoolClasses_Service schoolClasses_Service,
@@ -32,7 +32,7 @@ namespace CourseMicroSerivce.API.Controllers
             _schoolThemesService = Service;
             _mapper = mapper;
             _subjectService = schoolSubjects;
-            _classService= schoolClasses_Service;
+            _classService = schoolClasses_Service;
             _sessionService = sessionService;
             _permissionService = permissionService;
         }
@@ -58,8 +58,8 @@ namespace CourseMicroSerivce.API.Controllers
         }
 
         [HttpGet]
-        [Route("GetTeacherThemes")]
-        public async Task<IActionResult> GetTeacherThemes(string Uid)
+        [Route("GetTeacherThemesLive")]
+        public async Task<IActionResult> GetTeacherThemesLive(string Uid)
         {
 
             try
@@ -67,7 +67,7 @@ namespace CourseMicroSerivce.API.Controllers
                 var classes = await _classService.GetAll();
                 var session = await _sessionService.GetAll();
                 var subject = await _subjectService.GetAll();
-                var themes  = await _schoolThemesService.GetAll();
+                var themes = await _schoolThemesService.GetAll();
                 var permission = await _permissionService.GetAll();
                 var subjects = classes.
                      Join
@@ -84,40 +84,40 @@ namespace CourseMicroSerivce.API.Controllers
                       (su) => new { id = su.ClassId },
                       (c, su) => new { c.c, c.s, su }
                      )
-                     
+
                      .Join
                      (
                        themes,
-                       (c)=> new { id = c.su.Id },   
-                       (t)=> new {id=t.SubjectId },
-                       (c,t)=> new {c.c,c.su,c.s,t}
+                       (c) => new { id = c.su.Id },
+                       (t) => new { id = t.SubjectId },
+                       (c, t) => new { c.c, c.su, c.s, t }
                      )
                       .Join
                      (
                       permission,
-                      (s) => new { Id = s.su.Id,   },
+                      (s) => new { Id = s.su.Id, },
                       (p) => new { Id = p.SubjectId.Value, },
-                      (s, p) => new { s.s, s.c, s.su,s.t, p }
+                      (s, p) => new { s.s, s.c, s.su, s.t, p }
                      )
-                     
+
                      .Where
                      (
                       x => x.t.status == "Live" &&
-                      x.p.TeacherId== Uid 
-                      
+                      x.p.TeacherId == Uid
+
                      )
                      .Select
                      (
                       x => new
                       {
-                          Id           = x.t.Id,
-                          Name         = x.t.Name,
-                          image        = x.t.image,
-                          status       = x.t.status,
-                          subjectId    = x.t.SubjectId,
-                          className    = x.c.Name,
-                          subjectName  = x.su.Name,
-                          session      = x.s.SessionStart + " to " + x.s.SessionEnd,
+                          Id = x.t.Id,
+                          Name = x.t.Name,
+                          image = x.t.image,
+                          status = x.t.status,
+                          subjectId = x.t.SubjectId,
+                          className = x.c.Name,
+                          subjectName = x.su.Name,
+                          session = x.s.SessionStart + " to " + x.s.SessionEnd,
 
                       }
                      )
@@ -127,12 +127,87 @@ namespace CourseMicroSerivce.API.Controllers
             }
             catch (Exception e)
             {
-
                 throw new Exception(e.Message + e.InnerException?.Message);
             }
 
         }
 
+        [HttpGet]
+        [Route("GetTeacherThemesDraft")]
+        public async Task<IActionResult> GetTeacherThemesDraft(string Uid)
+        {
+
+            try
+            {
+                var classes = await _classService.GetAll();
+                var session = await _sessionService.GetAll();
+                var subject = await _subjectService.GetAll();
+                var themes = await _schoolThemesService.GetAll();
+                var permission = await _permissionService.GetAll();
+                var subjects = classes.
+                     Join
+                     (
+                                  session,
+                                  (c) => new { id = c.SesssionId },
+                                  (s) => new { id = s.Id },
+                                  (c, s) => new { c, s }
+                     )
+                     .Join
+                     (
+                      subject,
+                      (c) => new { id = c.c.Id },
+                      (su) => new { id = su.ClassId },
+                      (c, su) => new { c.c, c.s, su }
+                     )
+
+                     .Join
+                     (
+                       themes,
+                       (c) => new { id = c.su.Id },
+                       (t) => new { id = t.SubjectId },
+                       (c, t) => new { c.c, c.su, c.s, t }
+                     )
+                      .Join
+                     (
+                      permission,
+                      (s) => new { Id = s.su.Id, },
+                      (p) => new { Id = p.SubjectId.Value, },
+                      (s, p) => new { s.s, s.c, s.su, s.t, p }
+                     )
+
+                     .Where
+                     (
+                      x => x.t.status == "Draft" &&
+                      x.p.TeacherId == Uid
+
+                     )
+                     .Select
+                     (
+                      x => new
+                      {
+                          Id = x.t.Id,
+                          Name = x.t.Name,
+                          image = x.t.image,
+                          status = x.t.status,
+                          subjectId = x.t.SubjectId,
+                          className = x.c.Name,
+                          subjectName = x.su.Name,
+                          session = x.s.SessionStart + " to " + x.s.SessionEnd,
+
+                      }
+                     )
+                     .ToList();
+
+                return Ok(subjects);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message + e.InnerException?.Message);
+            }
+
+        }
+
+        //admin Area 
         [HttpGet]
         [Route("GethemesDraft")]
         public async Task<IActionResult> GethemesDraft()

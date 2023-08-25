@@ -13,7 +13,8 @@ namespace CourseMicroSerivce.Models.TeacherPortal
         public string SessionStart { get; set; }
         [Required(ErrorMessage = "End Date  is Required")]
         public string SessionEnd { get; set; }
-
+        [Required(ErrorMessage = "Language  is Required")]
+        public string Language { get; set; }
 
     }
 }

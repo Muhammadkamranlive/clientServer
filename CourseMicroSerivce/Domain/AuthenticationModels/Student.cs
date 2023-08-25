@@ -1,18 +1,13 @@
-﻿namespace CourseMicroSerivce.Domain.AuthenticationModels
+﻿using CourseMicroSerivce.CustomValidators;
+using System.ComponentModel.DataAnnotations;
+
+namespace CourseMicroSerivce.Domain.AuthenticationModels
 {
     public class Student:ApplicationUser
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public DateTime ExpirationDate { get; set; }
-        public string image { get; set; }
-        public string AddressLine1 { get; set; }
-        public string AddressLine2 { get; set; }
-        public string zipCode { get; set; }
-        public string city { get; set; }
-        public string country { get; set; }
-        public string phone { get; set; }
+        public DateTime endDate { get; set; }
+        public DateTime startDate { get; set; }
+        public string  paymentToken { get; set; }
+        public string speakingLanguage { get; set; }
     }
 }

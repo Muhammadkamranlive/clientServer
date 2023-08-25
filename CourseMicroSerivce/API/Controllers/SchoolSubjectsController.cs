@@ -12,25 +12,25 @@ namespace CourseMicroSerivce.API.Controllers
     [ApiController]
     public class SchoolSubjectsController : ParentController<SchoolSubjects, SchoolSubjectsModel>
     {
-        private readonly ISchoolSubjects_Service   _subjectService;
-        private readonly IMapper                   _mapper;
-        private readonly ISchoolClasses_Service    _classService;
-        private readonly IClassesSessions_Service  _sessionService;
+        private readonly ISchoolSubjects_Service _subjectService;
+        private readonly IMapper _mapper;
+        private readonly ISchoolClasses_Service _classService;
+        private readonly IClassesSessions_Service _sessionService;
         private readonly IPermission_Service _permissionService;
         public SchoolSubjectsController
         (
-         ISchoolSubjects_Service  Service,
-         ISchoolClasses_Service   ClassService,
+         ISchoolSubjects_Service Service,
+         ISchoolClasses_Service ClassService,
          IClassesSessions_Service SessionService,
-         IMapper                  mapper,
-         IPermission_Service      pm
+         IMapper mapper,
+         IPermission_Service pm
 
         ) : base(Service, mapper)
         {
-            _subjectService   = Service;
-            _mapper           = mapper;
-            _classService     = ClassService;
-            _sessionService   = SessionService;
+            _subjectService = Service;
+            _mapper = mapper;
+            _classService = ClassService;
+            _sessionService = SessionService;
             _permissionService = pm;
         }
 
@@ -57,7 +57,7 @@ namespace CourseMicroSerivce.API.Controllers
 
         [HttpGet]
         [Route("GetClassDetails")]
-        public  async Task<IActionResult> GetClassDetails()
+        public async Task<IActionResult> GetClassDetails()
         {
 
             try
@@ -66,40 +66,40 @@ namespace CourseMicroSerivce.API.Controllers
                 var session = await _sessionService.GetAll();
                 var subject = await _subjectService.GetAll();
 
-               var subjects= classes.
-                    Join
-                    (
-                                 session,
-                                 (c) => new { id = c.SesssionId },
-                                 (s) => new { id = s.Id },
-                                 (c, s) => new { c, s }
-                    )
-                    .Join
-                    (
-                     subject,
-                     (c) => new { id = c.c.Id },
-                     (su) => new { id = su.ClassId },
-                     (c, su) => new { c.c, c.s, su }
-                    )
-                    .Where
-                    (
-                     x => x.su.Status == "Live"
-                    )
-                    .Select
-                    (
-                     x => new
-                     {
-                         Id        =x.su.Id,
-                         Name      =x.su.Name,
-                         image     =x.su.image,
-                         status    =x.su.Status,
-                         classId   =x.su.ClassId,
-                         className =x.c.Name,
-                         session   =x.s.SessionStart+" to "+x.s.SessionEnd,
-                         
-                     }
-                    )
-                    .ToList();
+                var subjects = classes.
+                     Join
+                     (
+                                  session,
+                                  (c) => new { id = c.SesssionId },
+                                  (s) => new { id = s.Id },
+                                  (c, s) => new { c, s }
+                     )
+                     .Join
+                     (
+                      subject,
+                      (c) => new { id = c.c.Id },
+                      (su) => new { id = su.ClassId },
+                      (c, su) => new { c.c, c.s, su }
+                     )
+                     .Where
+                     (
+                      x => x.su.Status == "Live"
+                     )
+                     .Select
+                     (
+                      x => new
+                      {
+                          Id = x.su.Id,
+                          Name = x.su.Name,
+                          image = x.su.image,
+                          status = x.su.Status,
+                          classId = x.su.ClassId,
+                          className = x.c.Name,
+                          session = x.s.SessionStart + " to " + x.s.SessionEnd,
+
+                      }
+                     )
+                     .ToList();
 
                 return Ok(subjects);
             }
@@ -169,8 +169,8 @@ namespace CourseMicroSerivce.API.Controllers
 
 
         [HttpGet]
-        [Route("teacherGetSubjects")]
-        public async Task<IActionResult> GetClassDetails(string userId)
+        [Route("teacherGetSubjectsLive")]
+        public async Task<IActionResult> teacherGetSubjectsLive(string userId)
         {
 
             try
@@ -178,7 +178,7 @@ namespace CourseMicroSerivce.API.Controllers
                 var classes = await _classService.GetAll();
                 var session = await _sessionService.GetAll();
                 var subject = await _subjectService.GetAll();
-                var permission=await _permissionService.GetAll();
+                var permission = await _permissionService.GetAll();
                 var subjects = classes.
                      Join
                      (
@@ -197,14 +197,14 @@ namespace CourseMicroSerivce.API.Controllers
                      .Join
                      (
                       permission,
-                      (s)=> new {Id=s.su.Id},
-                      (p)=> new {Id=p.SubjectId.Value},
-                      (s,p)=> new {s.s,s.c,s.su,p }
+                      (s) => new { Id = s.su.Id },
+                      (p) => new { Id = p.SubjectId.Value },
+                      (s, p) => new { s.s, s.c, s.su, p }
                      )
                      .Where
                      (
                       x => x.su.Status == "Live"
-                      &&x.p.TeacherId==userId
+                      && x.p.TeacherId == userId
                      )
                      .Select
                      (
@@ -231,6 +231,71 @@ namespace CourseMicroSerivce.API.Controllers
             }
 
         }
+
+        [HttpGet]
+        [Route("teacherGetSubjectsDraft")]
+        public async Task<IActionResult> teacherGetSubjectsDraft(string userId)
+        {
+
+            try
+            {
+                var classes = await _classService.GetAll();
+                var session = await _sessionService.GetAll();
+                var subject = await _subjectService.GetAll();
+                var permission = await _permissionService.GetAll();
+                var subjects = classes.
+                     Join
+                     (
+                                  session,
+                                  (c) => new { id = c.SesssionId },
+                                  (s) => new { id = s.Id },
+                                  (c, s) => new { c, s }
+                     )
+                     .Join
+                     (
+                      subject,
+                      (c) => new { id = c.c.Id },
+                      (su) => new { id = su.ClassId },
+                      (c, su) => new { c.c, c.s, su }
+                     )
+                     .Join
+                     (
+                      permission,
+                      (s) => new { Id = s.su.Id },
+                      (p) => new { Id = p.SubjectId.Value },
+                      (s, p) => new { s.s, s.c, s.su, p }
+                     )
+                     .Where
+                     (
+                      x => x.su.Status == "Draft"
+                      && x.p.TeacherId == userId
+                     )
+                     .Select
+                     (
+                      x => new
+                      {
+                          Id = x.su.Id,
+                          Name = x.su.Name,
+                          image = x.su.image,
+                          status = x.su.Status,
+                          classId = x.su.ClassId,
+                          className = x.c.Name,
+                          session = x.s.SessionStart + " to " + x.s.SessionEnd,
+
+                      }
+                     )
+                     .ToList();
+
+                return Ok(subjects);
+            }
+            catch (Exception e)
+            {
+
+                throw new Exception(e.Message + e.InnerException?.Message);
+            }
+
+        }
+
 
 
     }

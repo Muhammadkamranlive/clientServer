@@ -5,16 +5,11 @@ namespace CourseMicroSerivce.Models.TeacherPortal
     public class SchoolQuizModel
     {
         public int Id { get; set; }
-        [Required(ErrorMessage = "Name /Title  is Required")]
-        public string Name { get; set; }
-
-        public string? image { get; set; }
-        [Required(ErrorMessage = "status  is Required")]
-        public string status { get; set; }
-        [Required(ErrorMessage = "Content   Type  is Required")]
-        public string ContentType { get; set; }
-        [Required(ErrorMessage = "Chapter  is Required")]
-        public int ChapterId { get; set; }
+        [Required(ErrorMessage ="User Must Required Please Login to Attempt it")]
+        public string UserId { get; set; }
+        public int CorrectAnswers { get; set; }
+        public int WrongAnswers { get; set; }
+        public int TotalQuestions { get; set; }
 
     }
 }

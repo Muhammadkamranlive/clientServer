@@ -27,6 +27,10 @@ namespace Project.DataAccess
         public virtual DbSet<SchoolQuiz> SchoolQuizzes { get; set; }
         public virtual DbSet<SchoolSubjects> SchoolSubjects { get; set; }
         public virtual DbSet<SchoolThemes> SchoolThemes { get; set; }
+        public virtual DbSet<VideoContent> VideoContents { get; set; }
+        public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public virtual DbSet<Student> StudentsUsers { get; set; }
+        public virtual DbSet<Teacher> TeachersUsers { get; set; }
         public virtual DbSet<PermissionManagment> PermissionManagments { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

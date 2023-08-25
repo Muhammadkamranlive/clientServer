@@ -12,21 +12,23 @@ namespace CourseMicroSerivce.API.Controllers
     [ApiController]
     public class SchoolChaptersController : ParentController<SchoolChapters, SchoolChaptersModel>
     {
-        private readonly IMapper                  _mapper;
-        private readonly ISchoolChapters_Service  _chapterService;
-        private readonly ISchoolSubjects_Service  _subjectService;
-        private readonly ISchoolClasses_Service   _classService;
+        private readonly IMapper _mapper;
+        private readonly ISchoolChapters_Service _chapterService;
+        private readonly ISchoolSubjects_Service _subjectService;
+        private readonly ISchoolClasses_Service _classService;
         private readonly IClassesSessions_Service _sessionService;
         private readonly ISchoolThemes_Service _schoolThemesService;
+        private readonly IPermission_Service _permissionService;
         public SchoolChaptersController
         (
-          
+
           IMapper mapper,
           ISchoolChapters_Service Service,
           ISchoolSubjects_Service schoolSubjects_Service,
           IClassesSessions_Service sessionSerivice,
           ISchoolClasses_Service classes_Service,
-          ISchoolThemes_Service schoolThemes_Service
+          ISchoolThemes_Service schoolThemes_Service,
+          IPermission_Service pmService
         ) : base(Service, mapper)
         {
             _chapterService = Service;
@@ -34,20 +36,25 @@ namespace CourseMicroSerivce.API.Controllers
             _classService = classes_Service;
             _sessionService = sessionSerivice;
             _schoolThemesService = schoolThemes_Service;
+            _permissionService = pmService;
+            _mapper = mapper;
         }
 
+
+        //Teacher area-------------------------------------------------
         [HttpGet]
-        [Route("getChapters")]
-        public async Task<IActionResult> getChapters()
+        [Route("getTeacherChaptersLive")]
+        public async Task<IActionResult> getTeacherChaptersLive(string uid)
         {
 
             try
             {
-                var classes  = await _classService.GetAll();
-                var session  = await _sessionService.GetAll();
-                var subject  = await _subjectService.GetAll();
-                var themes   = await _schoolThemesService.GetAll();
-                var chapters = await _chapterService.GetAll(); 
+                var classes = await _classService.GetAll();
+                var session = await _sessionService.GetAll();
+                var subject = await _subjectService.GetAll();
+                var themes = await _schoolThemesService.GetAll();
+                var chapters = await _chapterService.GetAll();
+                var permission = await _permissionService.GetAll();
                 var subjects = classes.
                      Join
                      (
@@ -73,9 +80,176 @@ namespace CourseMicroSerivce.API.Controllers
                      .Join
                      (
                       chapters,
-                      (th)=> new { id = th.t.Id},
-                      (chap)=> new {id=chap.ThemeId},
-                      (th,chap)=> new {th.c,th.su,th.s,th.t,chap}
+                      (th) => new { id = th.t.Id },
+                      (chap) => new { id = chap.ThemeId },
+                      (th, chap) => new { th.c, th.su, th.s, th.t, chap }
+                      )
+                     .Join
+                     (
+                       permission,
+                      (s) => new { Id = s.su.Id, },
+                      (p) => new { Id = p.SubjectId.Value, },
+                      (s, p) => new { s.s, s.c, s.su, s.t, s.chap, p }
+                     )
+                     .Where
+                     (
+                      x => x.chap.status == "Live"
+                      && x.p.TeacherId == uid
+                     )
+                     .Select
+                     (
+                      x => new
+                      {
+                          Id = x.chap.Id,
+                          Name = x.chap.Name,
+                          status = x.chap.status,
+                          themeId = x.chap.ThemeId,
+                          themeName = x.t.Name,
+                          subjectId = x.t.SubjectId,
+                          className = x.c.Name,
+                          subjectName = x.su.Name,
+                          session = x.s.SessionStart + " to " + x.s.SessionEnd,
+
+                      }
+                     )
+                     .ToList();
+
+                return Ok(subjects);
+            }
+            catch (Exception e)
+            {
+
+                throw new Exception(e.Message + e.InnerException?.Message);
+            }
+
+        }
+
+        [HttpGet]
+        [Route("getTeacherChaptersDraft")]
+        public async Task<IActionResult> getTeacherChaptersDraft(string uid)
+        {
+
+            try
+            {
+                var classes = await _classService.GetAll();
+                var session = await _sessionService.GetAll();
+                var subject = await _subjectService.GetAll();
+                var themes = await _schoolThemesService.GetAll();
+                var chapters = await _chapterService.GetAll();
+                var permission = await _permissionService.GetAll();
+                var subjects = classes.
+                     Join
+                     (
+                                  session,
+                                  (c) => new { id = c.SesssionId },
+                                  (s) => new { id = s.Id },
+                                  (c, s) => new { c, s }
+                     )
+                     .Join
+                     (
+                      subject,
+                      (c) => new { id = c.c.Id },
+                      (su) => new { id = su.ClassId },
+                      (c, su) => new { c.c, c.s, su }
+                     )
+                     .Join
+                     (
+                       themes,
+                       (su) => new { id = su.su.Id },
+                       (t) => new { id = t.SubjectId },
+                       (su, t) => new { su.c, su.su, su.s, t }
+                     )
+                     .Join
+                     (
+                      chapters,
+                      (th) => new { id = th.t.Id },
+                      (chap) => new { id = chap.ThemeId },
+                      (th, chap) => new { th.c, th.su, th.s, th.t, chap }
+                      )
+                     .Join
+                     (
+                       permission,
+                      (s) => new { Id = s.su.Id, },
+                      (p) => new { Id = p.SubjectId.Value, },
+                      (s, p) => new { s.s, s.c, s.su, s.t, s.chap, p }
+                     )
+                     .Where
+                     (
+                      x => x.chap.status == "Draft"
+                      && x.p.TeacherId == uid
+                     )
+                     .Select
+                     (
+                      x => new
+                      {
+                          Id = x.chap.Id,
+                          Name = x.chap.Name,
+                          status = x.chap.status,
+                          themeId = x.chap.ThemeId,
+                          themeName = x.t.Name,
+                          subjectId = x.t.SubjectId,
+                          className = x.c.Name,
+                          subjectName = x.su.Name,
+                          session = x.s.SessionStart + " to " + x.s.SessionEnd,
+
+                      }
+                     )
+                     .ToList();
+
+                return Ok(subjects);
+            }
+            catch (Exception e)
+            {
+
+                throw new Exception(e.Message + e.InnerException?.Message);
+            }
+
+
+        }
+
+
+
+        //admin area-------------------------------------------------
+        [HttpGet]
+        [Route("getChapters")]
+        public async Task<IActionResult> getChapters()
+        {
+
+            try
+            {
+                var classes = await _classService.GetAll();
+                var session = await _sessionService.GetAll();
+                var subject = await _subjectService.GetAll();
+                var themes = await _schoolThemesService.GetAll();
+                var chapters = await _chapterService.GetAll();
+                var subjects = classes.
+                     Join
+                     (
+                                  session,
+                                  (c) => new { id = c.SesssionId },
+                                  (s) => new { id = s.Id },
+                                  (c, s) => new { c, s }
+                     )
+                     .Join
+                     (
+                      subject,
+                      (c) => new { id = c.c.Id },
+                      (su) => new { id = su.ClassId },
+                      (c, su) => new { c.c, c.s, su }
+                     )
+                     .Join
+                     (
+                       themes,
+                       (su) => new { id = su.su.Id },
+                       (t) => new { id = t.SubjectId },
+                       (su, t) => new { su.c, su.su, su.s, t }
+                     )
+                     .Join
+                     (
+                      chapters,
+                      (th) => new { id = th.t.Id },
+                      (chap) => new { id = chap.ThemeId },
+                      (th, chap) => new { th.c, th.su, th.s, th.t, chap }
                       )
                      .Where
                      (
@@ -85,15 +259,15 @@ namespace CourseMicroSerivce.API.Controllers
                      (
                       x => new
                       {
-                          Id          = x.chap.Id,
-                          Name        = x.chap.Name,
-                          status      = x.chap.status,
-                          themeId     = x.chap.ThemeId,
-                          themeName   =x.t.Name,
-                          subjectId   = x.t.SubjectId,
-                          className   = x.c.Name,
+                          Id = x.chap.Id,
+                          Name = x.chap.Name,
+                          status = x.chap.status,
+                          themeId = x.chap.ThemeId,
+                          themeName = x.t.Name,
+                          subjectId = x.t.SubjectId,
+                          className = x.c.Name,
                           subjectName = x.su.Name,
-                          session     = x.s.SessionStart + " to " + x.s.SessionEnd,
+                          session = x.s.SessionStart + " to " + x.s.SessionEnd,
 
                       }
                      )
@@ -225,7 +399,7 @@ namespace CourseMicroSerivce.API.Controllers
                       )
                      .Where
                      (
-                      x => x.chap.status == "Live" && x.su.Id==id
+                      x => x.chap.status == "Live" && x.su.Id == id
                      )
                      .GroupBy
                      (
@@ -233,12 +407,12 @@ namespace CourseMicroSerivce.API.Controllers
                             {
                                 ThemeId = x.t.Id,
                                 ThemeName = x.t.Name,
-                                className=x.c.Name,
-                                classId=x.c.Id,
-                                subjectName=x.su.Name, 
-                                subjectId=x.su.Id,
-                                session=x.s.Id,
-                                sessionName=x.s.SessionStart+" to "+x.s.SessionEnd,
+                                className = x.c.Name,
+                                classId = x.c.Id,
+                                subjectName = x.su.Name,
+                                subjectId = x.su.Id,
+                                session = x.s.Id,
+                                sessionName = x.s.SessionStart + " to " + x.s.SessionEnd,
                             },
                             (key, group) => new
                             {
@@ -251,10 +425,10 @@ namespace CourseMicroSerivce.API.Controllers
                                 key.session,
                                 Chapters = group.Select(g => new
                                 {
-                                    ChapterId     = g.chap.Id,
-                                    ChapterName   = g.chap.Name,
+                                    ChapterId = g.chap.Id,
+                                    ChapterName = g.chap.Name,
                                     ChapterStatus = g.chap.status,
-                                    chaptersImage = g.chap.image     
+                                    chaptersImage = g.chap.image
                                 })
                             }
                         )
